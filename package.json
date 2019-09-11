@@ -1,5 +1,6 @@
 {
   "devDependencies": {
+    "serverless-plugin-external-sns-events": "^1.1.0",
     "serverless-plugin-typescript": "^1.1.9",
     "typescript": "^3.6.3"
   }
