@@ -9,10 +9,12 @@ functions:
           method: get
           authorizer: ${self:custom.firebaseAuthorizer}
 
-  testSns:
-    handler: src/handlers/testSns.handler
+  insertUserToDynamo:
+    handler: src/handlers/insertUserToDynamo.handler
     events:
-      - externalSNS: 'LambdaTestSns'
+      - externalSNS: 'UserCreated'
+    environment:
+      USERS_TABLE: ${self:custom.usersTableName}
 
 provider:
   name: aws
@@ -25,8 +27,26 @@ provider:
       'Fn::ImportValue': hh-${self:provider.stage}-ApiGatewayRestApiId
     restApiRootResourceId:
       'Fn::ImportValue': hh-${self:provider.stage}-ApiGatewayRestApiRootResourceId
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource:
+        Fn::Join:
+          - ":"
+          - - arn
+            - aws
+            - dynamodb
+            - Ref: AWS::Region
+            - Ref: AWS::AccountId
+            - table/${self:custom.usersTableName}
 
 custom:
+  usersTableName: hh-${self:provider.stage}-users
   firebaseAuthorizer:
     type: CUSTOM
     authorizerId:
@@ -45,3 +65,17 @@ custom:
 plugins:
   - serverless-plugin-typescript
   - serverless-plugin-external-sns-events
+
+resources:
+  Resources:
+    StoresTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.usersTableName}
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
