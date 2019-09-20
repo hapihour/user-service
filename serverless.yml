@@ -15,6 +15,44 @@ functions:
       - externalSNS: 'UserCreated'
     environment:
       USERS_TABLE: ${self:custom.usersTableName}
+    iamRoleStatements:
+      - Effect: Allow
+        Action:
+          - dynamodb:Scan
+          - dynamodb:GetItem
+          - dynamodb:PutItem
+          - dynamodb:UpdateItem
+          - dynamodb:DeleteItem
+        Resource:
+          Fn::Join:
+            - ":"
+            - - arn
+              - aws
+              - dynamodb
+              - Ref: AWS::Region
+              - Ref: AWS::AccountId
+              - table/${self:custom.usersTableName}
+
+  insertUserToAlgolia:
+    handler: src/handlers/insertUserToAlgolia.handler
+    events:
+      - externalSNS: 'UserCreated'
+    environment:
+      ALGOLIA_APP_ID: ${ssm:/${self:service}/${self:provider.stage}/ALGOLIA_APP_ID}
+      ALGOLIA_USER_INDEX: ${ssm:/${self:service}/${self:provider.stage}/ALGOLIA_USER_INDEX}
+      ALGOLIA_TOKEN: ${ssm:/${self:service}/${self:provider.stage}/ALGOLIA_TOKEN~true}
+
+  searchUser:
+    handler: src/handlers/searchUser.handler
+    environment:
+      ALGOLIA_APP_ID: ${ssm:/${self:service}/${self:provider.stage}/ALGOLIA_APP_ID}
+      ALGOLIA_USER_INDEX: ${ssm:/${self:service}/${self:provider.stage}/ALGOLIA_USER_INDEX}
+      ALGOLIA_TOKEN: ${ssm:/${self:service}/${self:provider.stage}/ALGOLIA_TOKEN~true}
+    events:
+      - http:
+          path: /users/search
+          method: get
+          authorizer: ${self:custom.firebaseAuthorizer}
 
 provider:
   name: aws
@@ -27,23 +65,6 @@ provider:
       'Fn::ImportValue': hh-${self:provider.stage}-ApiGatewayRestApiId
     restApiRootResourceId:
       'Fn::ImportValue': hh-${self:provider.stage}-ApiGatewayRestApiRootResourceId
-  iamRoleStatements:
-    - Effect: Allow
-      Action:
-        - dynamodb:Scan
-        - dynamodb:GetItem
-        - dynamodb:PutItem
-        - dynamodb:UpdateItem
-        - dynamodb:DeleteItem
-      Resource:
-        Fn::Join:
-          - ":"
-          - - arn
-            - aws
-            - dynamodb
-            - Ref: AWS::Region
-            - Ref: AWS::AccountId
-            - table/${self:custom.usersTableName}
 
 custom:
   usersTableName: hh-${self:provider.stage}-users

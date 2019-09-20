@@ -1,26 +1,18 @@
-import * as AWS from "aws-sdk";
-
-interface User {
-  id: string;
-  email: string;
-  photoUrl: string;
-  name: string;
-}
+import * as AWS from 'aws-sdk';
+import {IUser} from '../common/interaces';
 
 export const handler = (event, context) => {
-  const user: User = JSON.parse(event.Records[0].Sns.Message);
-
-  console.log(user);
+  const user: IUser = JSON.parse(event.Records[0].Sns.Message);
 
   insertUserToDynamo(user);
 };
 
-const insertUserToDynamo = (user: User) => {
+const insertUserToDynamo = (user: IUser) => {
   const dynamoDb = new AWS.DynamoDB.DocumentClient();
   const params = {
     Item: user,
-    TableName: process.env.USERS_TABLE!
+    TableName: process.env.USERS_TABLE!,
   };
 
   return dynamoDb.put(params).promise();
-}
+};
