@@ -1,4 +1,4 @@
-import { IUser } from "../common/interaces";
+import { IUser } from "../common/interfaces";
 import { buildUserIndex } from "../common/algolia";
 
 export const handler = (event: any) => {

@@ -1,4 +1,4 @@
-import * as algoliasearch from 'algoliasearch';
+import algoliasearch from 'algoliasearch';
 
 export const buildUserIndex = () => {
   const algoliaApp = process.env.ALGOLIA_APP_ID!;

@@ -1,7 +1,11 @@
-export const handler = (event, context, callback) => {
-  const response =  {
-    body: JSON.stringify(event)
+export const handler = async (event, context) => {
+  const response = {
+    statusCode: 200,
+    body: JSON.stringify({
+      event,
+      context
+    })
   }
 
-  callback(null, response)
+  return response;
 }

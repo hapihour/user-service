@@ -1,7 +1,7 @@
-import * as AWS from 'aws-sdk';
-import {IUser} from '../common/interaces';
-import {buildUserIndex} from '../common/algolia';
-import {Response as AlgoliaResponse} from 'algoliasearch';
+import * as AWS from "aws-sdk";
+import { IUser } from "../common/interfaces";
+import { buildUserIndex } from "../common/algolia";
+import { Response as AlgoliaResponse } from "algoliasearch";
 
 export const handler = async (event, context, callback) => {
   const query = event.queryStringParameters.q;
@@ -12,7 +12,7 @@ export const handler = async (event, context, callback) => {
 
 const queryForUser = async (query: string): Promise<AlgoliaResponse> => {
   const userIndex = buildUserIndex();
-  const response: AlgoliaResponse = await userIndex.search({query});
+  const response: AlgoliaResponse = await userIndex.search({ query });
 
   return response;
 };
