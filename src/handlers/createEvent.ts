@@ -1,12 +1,35 @@
-import { getDdbClient, getCurrentTime } from "../utils";
+import { getCurrentTime, publishToSnsTopic } from "../utils";
 import uuidv4 from "uuid/v4";
 import { Event } from "../common/interfaces";
+import { getPlaceDetails } from "../actions/google";
+import { putEvent } from "../db/putEvent";
+import { APIGatewayProxyEvent } from "aws-lambda";
+import { getUser } from "../db/getUser";
+import { Topics } from "../common/topics";
 
-export const handler = async ({ body, requestContext }) => {
-  const { placeId } = JSON.parse(body);
-  const userId = requestContext.authorizer["HH-UID"];
+export const handler = async ({
+  body,
+  requestContext
+}: APIGatewayProxyEvent) => {
+  const { placeId } = JSON.parse(body!);
+  const userId = (requestContext.authorizer || {})["HH-UID"];
 
-  const event = await insertEventToDynamo(placeId, userId);
+  const place = await getPlaceDetails(placeId);
+  const user = await getUser(userId);
+
+  const event: Event = {
+    id: uuidv4(),
+    placeId,
+    userId,
+    placeName: place.name || "",
+    userName: user.name,
+    vicinity: place.vicinity || "",
+    createdAt: getCurrentTime()
+  };
+
+  await putEvent(event);
+
+  await publishToSnsTopic(Topics.EventCreated, event);
 
   const response = {
     statusCode: 200,
@@ -16,30 +39,4 @@ export const handler = async ({ body, requestContext }) => {
   };
 
   return response;
-};
-
-const insertEventToDynamo = async (
-  placeId: string,
-  userId: string
-): Promise<Event> => {
-  const client = getDdbClient();
-
-  const data: Event = {
-    id: uuidv4(),
-    placeId,
-    userId,
-    createdAt: getCurrentTime()
-  };
-
-  const params: AWS.DynamoDB.DocumentClient.PutItemInput = {
-    Item: {
-      PK: `User_${userId}`,
-      SK: `Event_${data.id}`,
-      data
-    },
-    TableName: process.env.TABLE_NAME!
-  };
-
-  await client.put(params).promise();
-  return data;
 };

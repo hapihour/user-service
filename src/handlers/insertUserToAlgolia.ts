@@ -1,18 +1,9 @@
 import { IUser } from "../common/interfaces";
-import { buildUserIndex } from "../common/algolia";
+import { algoliaPutUser } from "../algolia/algoliaPutUser";
+import { SNSEvent } from "aws-lambda";
 
-export const handler = (event: any) => {
+export const handler = async (event: SNSEvent) => {
   const user: IUser = JSON.parse(event.Records[0].Sns.Message);
 
-  insertUserToAlgolia(user);
-};
-
-const insertUserToAlgolia = (user: IUser) => {
-  const userIndex = buildUserIndex();
-
-  return userIndex.addObject({
-    objectID: user.id,
-    name: user.name,
-    photoUrl: user.photoUrl
-  });
+  await algoliaPutUser(user);
 };

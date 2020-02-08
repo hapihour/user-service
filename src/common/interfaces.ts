@@ -8,6 +8,9 @@ export interface IUser {
 export interface Event {
   id: string,
   placeId: string,
+  placeName: string,
+  vicinity: string,
   userId: string,
+  userName: string,
   createdAt: string
 }

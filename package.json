@@ -8,6 +8,7 @@
     "typescript": "^3.6.3"
   },
   "dependencies": {
+    "@googlemaps/google-maps-services-js": "^2.0.2",
     "algoliasearch": "^3.34.0",
     "aws-sdk": "^2.526.0",
     "serverless": "^1.63.0",
