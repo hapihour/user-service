@@ -23,6 +23,7 @@ export const handler = async ({
     userId,
     placeName: place.name || "",
     userName: user.name,
+    userPhotoUrl: user.photoUrl,
     vicinity: place.vicinity || "",
     createdAt: getCurrentTime()
   };

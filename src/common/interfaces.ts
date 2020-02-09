@@ -12,5 +12,10 @@ export interface Event {
   vicinity: string,
   userId: string,
   userName: string,
+  userPhotoUrl: string,
   createdAt: string
+}
+
+export type AlgoliaEvent = Event & {
+  createdAtTimestamp: number
 }
