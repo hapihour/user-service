@@ -12,6 +12,7 @@
     "algoliasearch": "^3.34.0",
     "aws-sdk": "^2.526.0",
     "serverless": "^1.63.0",
+    "serverless-pseudo-parameters": "^2.5.0",
     "uuid": "^3.4.0"
   }
 }
