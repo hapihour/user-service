@@ -11,6 +11,7 @@ export const handler = async ({
   body,
   requestContext
 }: APIGatewayProxyEvent) => {
+  console.log(body);
   const { placeId } = JSON.parse(body!);
   const userId = (requestContext.authorizer || {})["HH-UID"];
 

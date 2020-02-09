@@ -21,8 +21,10 @@ export const publishToSnsTopic = async <T>(
   topic: string,
   message: T
 ): Promise<void> => {
-  const sns = new AWS.SNS({ region: process.env.region });
+  const sns = new AWS.SNS({ region: 'ap-southeast-2' });
   const topicArn = `${process.env.SNS_PREFIX}-${topic}`;
+
+  console.log(topicArn);
 
   const params = {
     Message: JSON.stringify(message),
