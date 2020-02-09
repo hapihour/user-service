@@ -13,14 +13,6 @@ functions:
           method: get
           authorizer: ${self:custom.firebaseAuthorizer}
 
-  getUserEvents:
-    handler: src/handlers/getUserEvents.handler
-    events:
-      - http:
-          path: /events
-          method: get
-          authorizer: ${self:custom.firebaseAuthorizer}
-
   createEvent:
     handler: src/handlers/createEvent.handler
     events:
