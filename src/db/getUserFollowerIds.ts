@@ -19,5 +19,5 @@ export const getUserFollowerIds = async (userId: string): Promise<string[]> => {
   };
 
   const res = await client.query(params).promise()
-  return (res.Items || []).map(i => i.data.id);
+  return (res.Items || []).map(i => i.data.id).filter(i => i !== userId);
 };
