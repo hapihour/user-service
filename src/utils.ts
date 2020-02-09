@@ -17,9 +17,9 @@ export const getAlgoliaEventsIndex = (): Index => {
   return getAlgoliaClient().initIndex(process.env.ALGOLIA_EVENTS_INDEX!);
 };
 
-export const publishToSnsTopic = async (
+export const publishToSnsTopic = async <T>(
   topic: string,
-  message: Object
+  message: T
 ): Promise<void> => {
   const sns = new AWS.SNS({ region: process.env.region });
   const topicArn = `${process.env.SNS_PREFIX}-${topic}`;

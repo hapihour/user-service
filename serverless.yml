@@ -31,6 +31,14 @@ functions:
           method: post
           authorizer: ${self:custom.firebaseAuthorizer}
 
+  followUser:
+    handler: src/handlers/followUser.handler
+    events:
+      - http:
+          path: /follow
+          method: post
+          authorizer: ${self:custom.firebaseAuthorizer}
+
   insertUserToDynamo:
     handler: src/handlers/insertUserToDynamo.handler
     events:
@@ -40,6 +48,15 @@ functions:
     handler: src/handlers/insertUserToAlgolia.handler
     events:
       - sns: ${self:provider.stage}-UserCreated
+    environment:
+      ALGOLIA_USER_INDEX: ${ssm:/${self:service}/${self:provider.stage}/ALGOLIA_USER_INDEX}
+      ALGOLIA_APP_ID: ${ssm:/${self:service}/${self:provider.stage}/ALGOLIA_APP_ID}
+      ALGOLIA_TOKEN: ${ssm:/${self:service}/${self:provider.stage}/ALGOLIA_TOKEN~true}
+
+  updateAlgoliaUserFollowing:
+    handler: src/handlers/updateAlgoliaUserFollowing.handler
+    events:
+      - sns: ${self:provider.stage}-UserFollowed
     environment:
       ALGOLIA_USER_INDEX: ${ssm:/${self:service}/${self:provider.stage}/ALGOLIA_USER_INDEX}
       ALGOLIA_APP_ID: ${ssm:/${self:service}/${self:provider.stage}/ALGOLIA_APP_ID}
@@ -107,17 +124,27 @@ resources:
             AttributeType: S
           - AttributeName: SK
             AttributeType: S
+          - AttributeName: GSI2PK
+            AttributeType: S
         KeySchema:
           - AttributeName: PK
             KeyType: HASH
           - AttributeName: SK
             KeyType: RANGE
         GlobalSecondaryIndexes:
-          - IndexName: GSI1
+          - IndexName: GSI1 # Inverted PK/SK
             KeySchema:
               - AttributeName: SK
                 KeyType: HASH
               - AttributeName: PK
+                KeyType: RANGE
+            Projection:
+              ProjectionType: ALL
+          - IndexName: GSI2
+            KeySchema:
+              - AttributeName: GSI2PK
+                KeyType: HASH
+              - AttributeName: SK
                 KeyType: RANGE
             Projection:
               ProjectionType: ALL

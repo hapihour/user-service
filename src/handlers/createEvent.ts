@@ -29,8 +29,7 @@ export const handler = async ({
   };
 
   await putEvent(event);
-
-  await publishToSnsTopic(Topics.EventCreated, event);
+  await publishToSnsTopic<Event>(Topics.EventCreated, event);
 
   const response = {
     statusCode: 200,

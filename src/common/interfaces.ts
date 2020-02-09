@@ -5,6 +5,15 @@ export interface IUser {
   name: string;
 }
 
+export type AlgoliaUser = {
+  id: string;
+  photoUrl: string;
+  name: string;
+  objectID: string,
+  following: string[],
+  followers: string[]
+}
+
 export interface Event {
   id: string,
   placeId: string,
@@ -17,5 +26,6 @@ export interface Event {
 }
 
 export type AlgoliaEvent = Event & {
-  createdAtTimestamp: number
+  createdAtTimestamp: number,
+  objectID: string
 }

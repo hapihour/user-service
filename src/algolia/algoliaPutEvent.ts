@@ -6,7 +6,8 @@ export const algoliaPutEvent = async (event: Event): Promise<void> => {
   const createdAtTimestamp = Date.parse(event.createdAt);
   const algoliaEvent: AlgoliaEvent = {
     ...event,
-    createdAtTimestamp
+    createdAtTimestamp,
+    objectID: event.id
   }
 
   await index.addObject(algoliaEvent);

@@ -11,6 +11,8 @@ export const handler = async (awsEvent: SNSEvent) => {
 
   const userId = event.userId;
   const followerIds = await getUserFollowerIds(userId);
+
+  console.log(`FollowerIDS: ${followerIds}`);
   const pushTokens = await getPushTokensFromUserIds(followerIds);
 
   const messages = pushTokens.map(pushToken => ({
