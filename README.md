@@ -2,7 +2,7 @@
 
 This repository is mainly responsible for handling serverless functions related to the HapiHour app.
 
-This includes the following lambda functions:
+## Lambda functions
 - createEvent
 - followUser
 - insertEventToAlgolia
@@ -12,10 +12,13 @@ This includes the following lambda functions:
 - saveUserPushToken
 - updateAlgoliaUserFollowing
 
-I also utilised the following techonologies
+## Other tech used
 - Serverless Framework
 - AWS Lambda
 - AWS API Gateway
 - AWS DynamoDB
 - AWS SNS
 - Algolia
+
+## TODO
+- Add tests
